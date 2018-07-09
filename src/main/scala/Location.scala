@@ -1,7 +1,8 @@
 class Location(lat:Double,lon:Double) extends CalcMesh {
-  /* メッシュ毎のパラメータ */
+  /* メッシュ毎のパラメータ
+  * １次メッシュの緯度経度は不要なのでダミー */
   override val meshMap:Map[String,(Double,Double,Int)] = Map(
-    "1st" -> (0.6666666,100,0),
+    "1st" -> (0,0,0),
     "2nd" -> (0.0833333,0.125,1),
     "1km" -> (0.0083333,0.0125,1),
     "500m" -> (0.00416665,0.00625,2),
@@ -50,7 +51,6 @@ class Location(lat:Double,lon:Double) extends CalcMesh {
 
   def Ltln2mesh(aft:String,src:String) :String = {
       var ans:String = ""
-      println(src + tmp_lat.toString +"___" +  tmp_lon.toString)
       meshMap(src)._3 match {
       /* 最初の１次メッシュの場合 */
       case 0 => {
@@ -67,7 +67,6 @@ class Location(lat:Double,lon:Double) extends CalcMesh {
         tmp_lat = LtTup._2
         tmp_lon = LnTup._2
         ans = LtTup._1 + LnTup._1
-        println(ans)
       }
       /* 両方の商で決まる場合 */
       case 2 => {

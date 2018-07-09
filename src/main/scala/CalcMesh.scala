@@ -58,10 +58,10 @@ trait CalcMesh {
       case _ => ""
     }
   }
-  /* 緯度の１次メッシュコードと剰余を返す*/
+  /* 緯度の１次メッシュコードと剰余を返す
+  * 40 / 60 は40分の剰余の度分秒計算 */
   def Lt21stMesh(lat:Double):(String,Double) = {
     val d1 = (lat * 1.5)
-    println(d1)
     (d1.toInt.toString(),(d1 - d1.toInt) * 40 / 60)
   }
 
