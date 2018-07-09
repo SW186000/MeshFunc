@@ -61,12 +61,13 @@ trait CalcMesh {
   /* 緯度の１次メッシュコードと剰余を返す*/
   def Lt21stMesh(lat:Double):(String,Double) = {
     val d1 = (lat * 1.5)
-    (d1.toInt.toString(),(d1 - d1.toInt))
+    println(d1)
+    (d1.toInt.toString(),(d1 - d1.toInt) * 40 / 60)
   }
 
   /* 経度の１次メッシュコードと剰余を返す*/
   def Ln21stMesh(lon:Double):(String,Double) = {
-    ((lon - 100.0).toString(),(lon - lon.toInt))
+    ((lon - 100.0).toInt.toString(),(lon - lon.toInt))
   }
 
   /* 緯度経度について、メッシュ番号と一般的な剰余を返す*/

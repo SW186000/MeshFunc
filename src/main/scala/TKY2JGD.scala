@@ -48,7 +48,7 @@ object TKY2JGD {
     else{
 
       /* 東、北、北東のメッシュを取得　*/
-      val meshE = Mesh1km.getOtherMesh(1,0)
+      /* val meshE = Mesh1km.getOtherMesh(1,0)
       val meshN = Mesh1km.getOtherMesh(0,1)
       val meshNE = Mesh1km.getOtherMesh(1,1)
 
@@ -62,8 +62,9 @@ object TKY2JGD {
       val dB = interpol(d0._1,d1._1,d2._1,d3._1,0.0,0.0)
       val dL = interpol(d0._2,d1._2,d2._2,d3._2,0.0,0.0)
       (Some(dB),Some(dL))
-
+      */
     }
+    (Some(1),Some(1))
 
   }
 
