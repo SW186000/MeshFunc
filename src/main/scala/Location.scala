@@ -1,7 +1,7 @@
 class Location(lat:Double,lon:Double) extends CalcMesh {
   /* メッシュ毎のパラメータ
   * １次メッシュの緯度経度は不要なのでダミー */
-  override val meshMap:Map[String,(Double,Double,Int)] = Map(
+  val meshMap:Map[String,(Double,Double,Int)] = Map(
     "1st" -> (0,0,0),
     "2nd" -> (0.0833333,0.125,1),
     "1km" -> (0.0083333,0.0125,1),
@@ -13,8 +13,9 @@ class Location(lat:Double,lon:Double) extends CalcMesh {
     "10m" -> (0.000083333,0.000125,1)
   )
 
-  /* メッシュの計算順序 */
-  override val meshOrder = List(
+  /* メッシュの計算順序
+   * 複数の計算手法があるため、リストを複数用意 */
+  val meshOrder = List(
     List("1st","2nd","1km","500m","250m","125m"),
     List("1st","2nd","1km","100m","50m"),
     List("1st","2nd","1km","100m","10m")
