@@ -60,10 +60,29 @@ trait CalcMesh {
   }
 
   /* メッシュ番号について緯度経度とメッシュの余りを返す*/
-  def GeneralMesh2Attr(Attr:String,DivAttr:Double,flg:String):(String,Double,String) = {
-    if (flg == "lat") ("0",0.0,"lat")
-    else if (flg == "lon") ("0",0.0,"lon")
-    else ("-",0.0,"-")
+  def GeneralMesh2Attr(Attr:String,MultiplyAttr:Double,ltLnFlg:String):(String,Double,String) = {
+    if (Attr.length() < 2){
+      ("",0,ltLnFlg)
+    }
+    else {
+      val residual = Attr.substring(2, Attr.length())
+      if (ltLnFlg == "lat") (residual, Attr.substring(0).toInt * MultiplyAttr, "lat")
+      else if (ltLnFlg == "lon") (residual, Attr.substring(1).toInt * MultiplyAttr, "lon")
+      else ("-", 0.0, "-")
+    }
+  }
+
+  /* 緯度経度のプラスを商で判断する。*/
+  def MeshNumByLtLn(Attr1:String,MultiplyAttrList:List[Double],ltLnFlg:String):(String,Double,String) = {
+    if (Attr1.length() < 1){
+      ("",0,ltLnFlg)
+    }
+    else {
+      val residual = Attr1.substring(1,Attr1.length())
+      if ((Attr1.toInt == 2 || Attr1.toInt == 4) && ltLnFlg == "lat") (residual, MultiplyAttrList.head, ltLnFlg)
+      else if ((Attr1.toInt == 3 || Attr1.toInt == 4) && ltLnFlg == "lon") (residual, MultiplyAttrList.last, ltLnFlg)
+      else (residual, 0.0, ltLnFlg)
+    }
   }
 
 }
