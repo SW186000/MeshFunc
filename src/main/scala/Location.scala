@@ -21,14 +21,14 @@ class Location(lat:Double,lon:Double) extends CalcMesh {
           .foldLeft(List[String]())((x, y) => if (x.contains(meshsize)) x else x :+ y)
 
         /* 処理順序に沿って、メッシュを左から右へ*/
-        meshProcOrder.foldLeft("")(Ltln2mesh)
+        meshProcOrder.foldLeft("")(LtLn2mesh_main)
     }
     else{
       ""
     }
   }
 
-  def Ltln2mesh(aft:String,src:String) :String = {
+  private def LtLn2mesh_main(aft:String,src:String) :String = {
       var ans:String = ""
       meshMap(src)._3 match {
       /* 最初の１次メッシュの場合 */
@@ -58,8 +58,6 @@ class Location(lat:Double,lon:Double) extends CalcMesh {
       case _ => ""
     }
     aft.concat(ans)
-
-
 
   }
 

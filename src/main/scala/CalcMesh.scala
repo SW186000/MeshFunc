@@ -46,16 +46,16 @@ trait CalcMesh {
 
   /* メッシュ番号を緯度経度両方で判定する場合 */
   def MeshNumByLtLn(Attr1:String,Attr2:String):String = {
-    (Attr1.toInt + Attr2.toInt * 2 + 1).toString()
+    (Attr1.toInt * 2 + Attr2.toInt + 1).toString()
   }
 
   /* 1次メッシュの南西端の取得(緯度） */
-  def FstMesh2Lt(mesh:String,meshsize:String):(String,Double) = {
+  def FstMesh2Lt(mesh:String):(String,Double) = {
     (mesh.substring(4,mesh.length()),mesh.substring(0,1).toDouble / 1.5)
   }
 
   /* 1次メッシュの南西端の取得(経度） */
-  def FstMesh2Ln(mesh:String,meshsize:String):(String,Double) = {
+  def FstMesh2Ln(mesh:String):(String,Double) = {
     (mesh.substring(4,mesh.length()),mesh.substring(2,3).toInt + 100)
   }
 
@@ -73,14 +73,14 @@ trait CalcMesh {
   }
 
   /* 緯度経度のプラスを商で判断する。*/
-  def MeshNumByLtLn(Attr1:String,MultiplyAttrList:List[Double],ltLnFlg:String):(String,Double,String) = {
+  def MeshNumByLtLn(Attr1:String,MultiplyAttrList:(Double,Double),ltLnFlg:String):(String,Double,String) = {
     if (Attr1.length() < 1){
       ("",0,ltLnFlg)
     }
     else {
       val residual = Attr1.substring(1,Attr1.length())
-      if ((Attr1.toInt == 2 || Attr1.toInt == 4) && ltLnFlg == "lat") (residual, MultiplyAttrList.head, ltLnFlg)
-      else if ((Attr1.toInt == 3 || Attr1.toInt == 4) && ltLnFlg == "lon") (residual, MultiplyAttrList.last, ltLnFlg)
+      if ((Attr1.toInt == 3 || Attr1.toInt == 4) && ltLnFlg == "lat") (residual, MultiplyAttrList._1, ltLnFlg)
+      else if ((Attr1.toInt == 2 || Attr1.toInt == 4) && ltLnFlg == "lon") (residual, MultiplyAttrList._2, ltLnFlg)
       else (residual, 0.0, ltLnFlg)
     }
   }
