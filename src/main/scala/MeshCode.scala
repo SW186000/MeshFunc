@@ -1,6 +1,3 @@
-import io.circe.parser._
-import io.circe.generic.auto._
-
 
 
 class MeshCode(mesh:String,meshsize:String) extends CalcMesh {

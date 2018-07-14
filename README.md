@@ -1,5 +1,10 @@
 # MeshFunc
-TKY2JGD：TKY2JGDをScalaに移植。
-利用方法
-　val a = TKY2JGD.main(36.10377,140.0878)
-  a.get
+**TKY2JGD**
+
+Scalaの練習のため、記載。
+利用方法は下記のとおり。
+
+    val a = TKY2JGD.main(36.10377,140.0878)
+    
+    a.get
+
