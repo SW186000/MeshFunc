@@ -11,43 +11,59 @@ class MeshCode(mesh:String,meshsize:String) extends CalcMesh {
 
   /* メッシュコードから中心位置を取得する関数*/
   def getCentLocation:Location = {
-    new Location(0,0)
+    val swlat = mesh2SWltln("lat")
+    val swlon = mesh2SWltln("lon")
+    new Location(swlat + 0.5 * meshMap(meshsize)._1,swlon + 0.5 * meshMap(meshsize)._2)
   }
 
   /* 右左に移動して、異なるメッシュを取得する関数 */
   def getOtherMesh(eastnum:Int,northnum:Int):MeshCode = {
-    new MeshCode("555","1km")
+    val swlat = mesh2SWltln("lat")
+    val swlon = mesh2SWltln("lon")
+    val tgtlat = swlat + meshMap(meshsize)._1 * northnum
+    val tgtlon = swlon + meshMap(meshsize)._2 * eastnum
+    new Location(tgtlat,tgtlon).createMesh(meshsize)
   }
 
-  /* メッシュから南西端の緯度経度を取得する関数 */
-  def mesh2SWltln(mesh:String,meshsize:String,meshOrder:List[List[String]],meshMap:Map[String,(Double,Double,Int)],flg:String):Double = {
+  /* メッシュから南西端の緯度経度を取得する関数
+  * 誤差により端点がうまく表示されない可能性あり
+  * 要改修
+  * */
+  def mesh2SWltln(flg:String):Double = {
 
-      val attr:Double = 0
       /* 処理順序を定義 */
       val meshProcOrder = meshOrder.filter(x => x.contains(meshsize)).head
         .foldLeft(List[String]())((x, y) => if (x.contains(meshsize)) x else x :+ y)
 
       /* 処理順序に沿って、メッシュを左から右へ*/
-      mesh2SWltln_main(attr,meshOrder,meshMap,mesh,flg)
+      mesh2SWltln_main(meshProcOrder,meshMap,mesh,flg)
 
   }
 
-  /* メッシュ番号から緯度経度を出力する(loop用) */
-  private def mesh2SWltln_main(attr:Double,meshOrder:List[List[String]],meshMap:Map[String,(Double,Double,Int)],mesh:String,flg:String):Double = {
-    if (mesh.length() < 1) 0
-    else if (meshMap(meshsize)._3 == 0 || flg == "lat") FstMesh2Lt(meshsize)._2 + mesh2SWltln_main(attr, meshOrder.tail,meshMap,mesh.substring(2,mesh.length()),flg)
-    else if (meshMap(meshsize)._3 == 0 || flg == "lon") FstMesh2Ln(meshsize)._2  + mesh2SWltln_main(attr, meshOrder.tail,meshMap,mesh.substring(2,mesh.length()),flg)
-    else if (meshMap(meshsize)._3 == 1 ) GeneralMesh2Attr(mesh,meshMap(meshsize)._2,flg)._2 + mesh2SWltln_main(attr, meshOrder.tail,meshMap,mesh.substring(2,mesh.length()),flg)
-    else if (meshMap(meshsize)._3 == 2 ) MeshNumByLtLn(mesh,(meshMap(meshsize)._1,meshMap(meshsize)._2),flg)._2 + mesh2SWltln_main(attr, meshOrder.tail,meshMap,mesh.substring(1,mesh.length()),flg)
-    else 0.0
-  }
+  /* メッシュ番号から緯度経度を出力する(loop用)
+   * GetOtherMesh用に作成したもので、多少の誤差はある。
+   * */
+  private def mesh2SWltln_main(meshOrder:List[String],meshMap:Map[String,(Double,Double,Int)],mesh:String,flg:String):Double = {
 
-  def FourMesh2Lat():(String,Double) = {
-    ("",333)
-  }
-
-  def FourMesh2Lon():Double = {
-    333
+    if (mesh.length() < 1 || meshOrder.isEmpty) 0
+    else {
+      val meshsize_tmp = meshOrder.head
+      val calcType = meshMap(meshsize_tmp)_3
+      val ans = calcType match {
+      case 0 =>
+        flg match {
+          case "lat" => FstMesh2Lt (mesh) + mesh2SWltln_main (meshOrder.tail, meshMap, mesh.slice (4, mesh.length () ), flg)
+          case "lon" => FstMesh2Ln (mesh) + mesh2SWltln_main (meshOrder.tail, meshMap, mesh.slice (4, mesh.length () ), flg)
+        }
+      case 1 =>
+          flg match {
+            case "lat" => GeneralMesh2Attr(mesh, meshMap(meshsize_tmp)._1, flg) + mesh2SWltln_main(meshOrder.tail, meshMap, mesh.slice(2, mesh.length()), flg)
+            case "lon" => GeneralMesh2Attr(mesh, meshMap(meshsize_tmp)._2, flg) + mesh2SWltln_main(meshOrder.tail, meshMap, mesh.slice(2, mesh.length()), flg)
+          }
+      case 2 => MeshNumByLtLn (mesh, (meshMap (meshsize_tmp)._1, meshMap (meshsize_tmp)._2), flg) + mesh2SWltln_main (meshOrder.tail, meshMap, mesh.slice (1, mesh.length () ), flg)
+      }
+      ans
+    }
   }
 
 }
