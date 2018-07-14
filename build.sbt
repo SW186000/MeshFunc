@@ -16,3 +16,5 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 
+// https://mvnrepository.com/artifact/org.apache.commons/commons-io
+libraryDependencies += "org.apache.commons" % "commons-io" % "1.3.2"

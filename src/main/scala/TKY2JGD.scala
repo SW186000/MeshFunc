@@ -7,7 +7,7 @@ object TKY2JGD {
 
   def main(LatTKY:Double,LonTKY:Double):(Option[Double],Option[Double]) = {
     /* パラメータ参照 */
-    val pardata = new ParFile("resource/data.par")
+    val pardata = new ParFile("src/main/resource/TKY2JGD.par")
 
     /* bilinear補間 */
     val dBdL = Bilinear(LatTKY,LonTKY,pardata)
@@ -19,7 +19,7 @@ object TKY2JGD {
       (None,None)
     }
     else {
-      (Some(LatTKY + dBdL._1.get), Some(LonTKY + dBdL._2.get))
+      (Some(LatTKY + dBdL._1.get / 3600), Some(LonTKY + dBdL._2.get / 3600))
     }
   }
 
@@ -29,7 +29,7 @@ object TKY2JGD {
   入力座標 lat:y, lon:x   単位は度
   # from Ver.1.3.78 2001/11/22
   */
-  def Bilinear(LatTKY: Double, LonTKY: Double, file: ParFile):(Option[Double],Option[Double]) = {
+  def Bilinear(LatTKY: Double, LonTKY: Double, Parfile: ParFile):(Option[Double],Option[Double]) = {
   /*
   # マイナスの緯度（南緯），経度（西経）等日本の領土外は標準地域メッシュコードが定義されていない場所では，
   # 地域毎の変換パラメータがないので，直ちにOutsideにとぶ。
@@ -37,8 +37,6 @@ object TKY2JGD {
   # なお，このバグは日本領土内では結果にまったく影響しない。
   */
 
-    /* ParFileのパース */
-    val ParMap = file.getMap()
     /* メッシュコード作成 */
     val Mesh1km = new Location(LatTKY,LonTKY).createMesh("1km")
 
@@ -53,10 +51,10 @@ object TKY2JGD {
       val meshNE = Mesh1km.getOtherMesh(1,1)
 
       /* 補正データを取得 */
-      val d0 = ParMap(Mesh1km.toString())
-      val d1 = ParMap(meshE.toString())
-      val d2 = ParMap(meshN.toString())
-      val d3 = ParMap(meshNE.toString())
+      val d0 = Parfile.getMap(Mesh1km.toString())
+      val d1 = Parfile.getMap(meshE.toString())
+      val d2 = Parfile.getMap(meshN.toString())
+      val d3 = Parfile.getMap(meshNE.toString())
 
       /* 剰余などを使ってInterpolする*/
       val dB = interpol(d0._1,d1._1,d2._1,d3._1,0.0,0.0)
@@ -64,7 +62,6 @@ object TKY2JGD {
       (Some(dB),Some(dL))
 
     }
-    (Some(1),Some(1))
 
   }
 
