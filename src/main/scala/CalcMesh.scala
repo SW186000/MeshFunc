@@ -1,16 +1,16 @@
 trait CalcMesh {
   /* メッシュ毎のパラメータ
   * １次メッシュの緯度経度は不要なのでダミー */
-  val meshMap:Map[String,(Double,Double,Int)] = Map(
-    "1st" -> (0,0,0),
-    "2nd" -> (0.083333333,0.125,1),
-    "1km" -> (0.008333333,0.0125,1),
-    "500m" -> (0.004166665,0.00625,2),
-    "250m" -> (0.002083325,0.003125,2),
-    "125m" -> (0.001041662,0.0015625,2),
-    "100m" -> (0.000833333,0.00125,1),
-    "50m" -> (0.000416665,0.0000625,2),
-    "10m" -> (0.000083333,0.000125,1)
+  val meshMap:Map[String,MeshInfo] = Map(
+    "1st" ->  MeshInfo(0,0,0),
+    "2nd" ->  MeshInfo(0.083333333,0.125,1),
+    "1km" ->  MeshInfo(0.008333333,0.0125,1),
+    "500m" ->  MeshInfo(0.004166665,0.00625,2),
+    "250m" -> MeshInfo(0.002083325,0.003125,2),
+    "125m" -> MeshInfo(0.001041662,0.0015625,2),
+    "100m" -> MeshInfo(0.000833333,0.00125,1),
+    "50m" -> MeshInfo(0.000416665,0.0000625,2),
+    "10m" -> MeshInfo(0.000083333,0.000125,1)
   )
 
   /* メッシュの計算順序
@@ -29,28 +29,24 @@ trait CalcMesh {
 
   /* 緯度の１次メッシュコードと剰余を返す
   * 40 / 60 は40分の剰余の度分秒計算 */
-  def Lt21stMesh(lat:Double):(String,Double) = {
-    val d1 = (lat * 1.5)
-    (d1.toInt.toString(),(d1 - d1.toInt) * 40 / 60)
+  def Lt21stMesh(lat:Double):CalcResidual = {
+    val d1 = lat * 1.5
+    CalcResidual(d1.toInt.toString,(d1 - d1.toInt) * 40 / 60)
   }
 
   /* 経度の１次メッシュコードと剰余を返す*/
-  def Ln21stMesh(lon:Double):(String,Double) = {
-    ((lon - 100.0).toInt.toString(),(lon - lon.toInt))
-  }
+  def Ln21stMesh(lon:Double):CalcResidual = CalcResidual((lon - 100.0).toInt.toString, lon - lon.toInt)
 
   /* 緯度経度について、メッシュ番号と一般的な剰余を返す
   * 境界点の場合は北もしくは東に割り当てられるようにする。
   * 上2行が微少量を加えるのは，lon=138.45のとき3次が5とならずに6となるように
   * */
-  def GeneralAttr2Mesh(Attr:Double,DivAttr:Double):(String,Double) = {
-    (((Attr + 0.00000000001) / DivAttr).toInt.toString(), (Attr % DivAttr))
-  }
+  def GeneralAttr2Mesh(Attr:Double,DivAttr:Double):CalcResidual = CalcResidual(((Attr + 0.00000000001) / DivAttr).toInt.toString, Attr % DivAttr)
+
 
   /* メッシュ番号を緯度経度両方で判定する場合 */
-  def MeshNumByLtLn(Attr1:String,Attr2:String):String = {
-    (Attr1.toInt * 2 + Attr2.toInt + 1).toString()
-  }
+  def MeshNumByLtLn(Attr1:String,Attr2:String):String = (Attr1.toInt * 2 + Attr2.toInt + 1).toString
+
 
   /* 1次メッシュの南西端の取得(緯度） */
   def FstMesh2Lt(mesh:String):Double = mesh.slice(0,2).toDouble / 1.5
@@ -74,13 +70,13 @@ trait CalcMesh {
   }
 
   /* 緯度経度のプラスを商で判断する。*/
-  def MeshNumByLtLn(Attr1:String,MultiplyAttrList:(Double,Double),ltLnFlg:String):Double = {
+  def MeshNumByLtLn(Attr1:String,meshInfo:MeshInfo,ltLnFlg:String):Double = {
     if (Attr1.length() < 1){
       0
     }
     else {
-      if ((Attr1.toInt == 3 || Attr1.toInt == 4) && ltLnFlg == "lat")  MultiplyAttrList._1
-      else if ((Attr1.toInt == 2 || Attr1.toInt == 4) && ltLnFlg == "lon") MultiplyAttrList._2
+      if ((Attr1.toInt == 3 || Attr1.toInt == 4) && ltLnFlg == "lat")  meshInfo.lat
+      else if ((Attr1.toInt == 2 || Attr1.toInt == 4) && ltLnFlg == "lon") meshInfo.lon
       else 0
     }
   }

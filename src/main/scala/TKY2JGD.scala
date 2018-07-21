@@ -38,7 +38,7 @@ object TKY2JGD {
   */
 
     /* メッシュコード作成 */
-    val Mesh1km = new Location(LatTKY,LonTKY).createMesh("1km")
+    val Mesh1km = Location(LatTKY,LonTKY).createMesh("1km")
 
     if (Mesh1km.toString() == ""){
       (None,None)
@@ -51,14 +51,14 @@ object TKY2JGD {
       val meshNE = Mesh1km.getOtherMesh(1,1)
 
       /* 補正データを取得 */
-      val d0 = Parfile.getMap(Mesh1km.toString())
-      val d1 = Parfile.getMap(meshE.toString())
-      val d2 = Parfile.getMap(meshN.toString())
-      val d3 = Parfile.getMap(meshNE.toString())
+      val d0 = Parfile.getMap(Mesh1km)
+      val d1 = Parfile.getMap(meshE)
+      val d2 = Parfile.getMap(meshN)
+      val d3 = Parfile.getMap(meshNE)
 
       /* 剰余などを使ってInterpolする*/
-      val dB = interpol(d0._1,d1._1,d2._1,d3._1,0.0,0.0)
-      val dL = interpol(d0._2,d1._2,d2._2,d3._2,0.0,0.0)
+      val dB = interpol(d0.lat,d1.lat,d2.lat,d3.lat,0.0,0.0)
+      val dL = interpol(d0.lon,d1.lon,d2.lon,d3.lon,0.0,0.0)
       (Some(dB),Some(dL))
 
     }
@@ -83,7 +83,7 @@ object TKY2JGD {
     val B = u2 - u1
     val C = u3 - u1
     val D = u4 - u2 - u3 + u1
-    (a + B * X + C * Y + D * X * Y)
+    a + B * X + C * Y + D * X * Y
 
   }
 
