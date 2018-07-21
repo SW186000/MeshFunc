@@ -23,7 +23,12 @@ object MeshUtil {
     メッシュコードの中央点をとり、先程指定した端点と中央点の距離を一個一個確認する。
      */
 
+    List(Location(lat,lon).createMesh(meshsize))
 
   }
+
+  def Meter2Lat(location: Location, d: Double):Double = 0
+
+  def Meter2Lon(location: Location, d: Double):Double = 0
 
 }
